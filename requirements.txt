@@ -1,0 +1,7 @@
+synergy-dataset
+ipykernel
+pandas
+numpy
+pyarrow
+scikit-learn
+matplotlib
