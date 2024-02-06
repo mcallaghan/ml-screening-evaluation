@@ -1,0 +1,3 @@
+.ipynb_checkpoints/*
+.venv/*
+output_data/*

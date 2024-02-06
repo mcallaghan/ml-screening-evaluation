@@ -102,6 +102,9 @@ class ScreenSimulation():
         return self.df
 
 def main():
+    """
+    Run evaluations testing ML prioritisation across multiple ML pipelines and multiple datasets
+    """
     pipelines = [
         Pipeline(
             steps=[
