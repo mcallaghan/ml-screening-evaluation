@@ -1,7 +1,8 @@
-synergy-dataset
-ipykernel
-pandas
+#synergy-dataset
+#ipykernel
+pandas>=2.2.0
 numpy
 pyarrow
 scikit-learn
 matplotlib
+mpi4py

@@ -5,6 +5,11 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.feature_extraction.text import TfidfVectorizer
 import sys
+import sqlite3
+import time
+from datetime import timedelta
+import typer
+import math
 
 class ModelPipeline():
     """
@@ -17,7 +22,7 @@ class ModelPipeline():
         return
 
 class ScreenConfig():
-    def __init__(self, sample_prop=0.1, batch_size=200):
+    def __init__(self, sample_prop=0.1, batch_prop=0.1):
         """
         Configuration options for the screening simulation
 
@@ -29,7 +34,7 @@ class ScreenConfig():
             The number of documents that should be 'screened' before re-training a model and making new predictions
         """
         self.sample_prop = sample_prop
-        self.batch_size = batch_size
+        self.batch_prop = batch_prop
 
 class ScreenSimulation():
     """
@@ -60,8 +65,12 @@ class ScreenSimulation():
         Simulate screening an initial sample of documents
         """
         sample_ids = self.df.sample(frac=conf.sample_prop, random_state=seed).index
+        # Keep adding documents to the sample until we have at least 1 positive example
+        while self.df.loc[sample_ids,'y'].sum()==0:
+            new_s_ids = self.df[~self.df.index.isin(sample_ids)].sample(1, random_state=seed).index
+            sample_ids = sample_ids.union(new_s_ids, sort=False)
         self.df.loc[sample_ids,'screened'] = 1
-        self.df.loc[sample_ids,'order'] = np.arange(sample_ids.shape[0])+1
+        self.df.loc[sample_ids,'screened_order'] = np.arange(sample_ids.shape[0])+1
         
 
     def simulate(self, verbose=False):
@@ -71,7 +80,7 @@ class ScreenSimulation():
         # 'Screen' a sample of documents
         self.sample(self.seed, self.screen_config)
         # As long as there are documents left unscreened
-        while self.df.seen.sum() < self.df.shape[0]:
+        while self.df.screened.sum() < self.df.shape[0]:
             # Get the indices of screened and not yet screened documents
             train_idx = self.df[self.df['screened']==1].index
             pred_idx = self.df[self.df['screened']==0].index
@@ -84,13 +93,16 @@ class ScreenSimulation():
             
             # Make predictions for the unscreened documents
             y_pred = self.pipeline.predict_proba(self.df.loc[pred_idx,'X'])[:,1]
+            # Define the batch size (batch_prop) of screened records
+            batch_size = math.ceil(len(train_idx)*self.screen_config.batch_prop)
+            batch_size = min(batch_size,y_pred.shape[0])
             # Get the *batch_size* documents with the highest predictions
-            batch_idx = np.argsort(y_pred)[:-self.screen_config.batch_size-1:-1]
+            batch_idx = np.argsort(y_pred)[:-batch_size-1:-1]
             # Get the ids of this batch
             batch_id = pred_idx[batch_idx]
             # Mark this batch as screened and record the order they are screened in
             self.df.loc[batch_id,'screened'] = 1
-            self.df.loc[batch_id,'order'] = np.arange(
+            self.df.loc[batch_id,'screened_order'] = np.arange(
                 train_idx.shape[0],
                 train_idx.shape[0] + batch_id.shape[0]
             ) + 1
@@ -101,10 +113,30 @@ class ScreenSimulation():
                 print(self.df.loc[self.df['screened']==1,'y'].sum()/self.df['y'].sum())
         return self.df
 
-def main():
+def main(version: str):
     """
     Run evaluations testing ML prioritisation across multiple ML pipelines and multiple datasets
     """
+
+    try:
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        print(rank)
+        test = False
+    except:
+        import random
+        rank = 0
+        print(f'Test mode: randomly assigned {rank}')
+        test = True
+
+    con = sqlite3.connect('output_data/experiments.sql', timeout=20)
+    cur = con.cursor()
+    cur.execute('INSERT INTO runs (thread,version) VALUES (?,?)',(rank,version))
+    con.commit()
+    run_id = cur.lastrowid
+    cur.close()
+
     pipelines = [
         Pipeline(
             steps=[
@@ -120,11 +152,23 @@ def main():
         df = d.to_frame().rename(columns={'label_included':'y'})
         df['X'] = df['title'].astype(str) + ' ' + df['abstract'].astype(str)
         for pipe in pipelines:
-            ss = ScreenSimulation(df, pipe, 1, conf)
+            ss = ScreenSimulation(df, pipe, rank, conf)
             res = ss.simulate()
-            res.to_csv(f'output_data/{d.name}.csv',index=False)
-            
-        break
+            res = res.reset_index()
+            res['run_id'] = run_id
+            res['review'] = d.name
+            res = res.rename(columns={
+                'openalex_id': 'rec_id',
+                'y': 'relevant'
+            })
+            res[[
+                'run_id','rec_id','screened_order','review','relevant'
+            ]].to_sql(
+                'ordered_records', con, if_exists='append', index=False
+            )
 
 if __name__ == '__main__':
-    sys.exit(main())
+    start_time = time.monotonic()
+    typer.run(main)
+    end_time = time.monotonic()
+    print(timedelta(seconds=end_time - start_time))
