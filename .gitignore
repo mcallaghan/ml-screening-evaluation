@@ -1,3 +1,4 @@
 .ipynb_checkpoints/*
 .venv/*
 output_data/*
+sync.sh
