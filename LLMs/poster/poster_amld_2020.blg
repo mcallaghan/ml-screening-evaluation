@@ -1,0 +1,51 @@
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: poster_amld_2020.aux
+The style file: plain.bst
+Database file #1: ../Mendeley.bib
+Repeated entry---line 10937 of file ../Mendeley.bib
+ : @article{Lee1999
+ :                 ,
+I'm skipping whatever remains of this entry
+You've used 5 entries,
+            2118 wiz_defined-function locations,
+            534 strings with 4816 characters,
+and the built_in function-call counts, 1585 in all, are:
+= -- 160
+> -- 74
+< -- 0
++ -- 29
+- -- 24
+* -- 115
+:= -- 280
+add.period$ -- 15
+call.type$ -- 5
+change.case$ -- 27
+chr.to.int$ -- 0
+cite$ -- 5
+duplicate$ -- 54
+empty$ -- 118
+format.name$ -- 24
+if$ -- 315
+int.to.chr$ -- 0
+int.to.str$ -- 5
+missing$ -- 5
+newline$ -- 28
+num.names$ -- 10
+pop$ -- 19
+preamble$ -- 1
+purify$ -- 22
+quote$ -- 0
+skip$ -- 38
+stack$ -- 0
+substring$ -- 107
+swap$ -- 5
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 20
+warning$ -- 0
+while$ -- 18
+width$ -- 6
+write$ -- 56
+(There was 1 error message)

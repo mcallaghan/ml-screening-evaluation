@@ -1,0 +1,225 @@
+% Created with Brian Amberg's LaTeX Poster Template. Please refer for the     %
+% attached README.md file for the details how to compile with `pdflatex`.     %
+% --------------------------------------------------------------------------- %
+% $LastChangedDate:: 2011-09-11 10:57:12 +0200 (V, 11 szept. 2011)          $ %
+% $LastChangedRevision:: 128                                                $ %
+% $LastChangedBy:: rlegendi                                                 $ %
+% $Id:: poster.tex 128 2011-09-11 08:57:12Z rlegendi                        $ %
+% --------------------------------------------------------------------------- %
+\documentclass[a0paper,portrait]{baposter}
+
+\usepackage{relsize}		% For \smaller
+\usepackage{url}			% For \url
+\usepackage{epstopdf}	% Included EPS files automatically converted to PDF to include with pdflatex
+\usepackage{moresize}
+\usepackage{multicol}
+\usepackage[font=small,labelfont=bf]{subcaption} % <-- changed to subcaption
+
+
+
+%%% Global Settings %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\graphicspath{{pix/}}	% Root directory of the pictures 
+\tracingstats=2			% Enabled LaTeX logging with conditionals
+
+%%% Color Definitions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{bordercol}{RGB}{40,40,40}
+\definecolor{headercol1}{HTML}{DEEEB2}
+\definecolor{headercol2}{RGB}{80,80,80}
+\definecolor{headerfontcol}{RGB}{0,0,0}
+\definecolor{boxcolor}{HTML}{ffffff}
+
+%\definecolor{orange}{HTML}{FF7F00}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Utility functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% Save space in lists. Use this after the opening of the list %%%%%%%%%%%%%%%%
+\newcommand{\compresslist}{
+	\setlength{\itemsep}{1pt}
+	\setlength{\parskip}{0pt}
+	\setlength{\parsep}{0pt}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Document Start %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\typeout{Poster rendering started}
+
+%%% Setting Background Image %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\background{
+%	\begin{tikzpicture}[remember picture,overlay]%
+%	\draw (current page.north west)+(-2em,2em) node[anchor=north west]
+%	{\includegraphics[height=1.1\textheight]{background}};
+%	\end{tikzpicture}
+}
+
+%%% General Poster Settings %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%% Eye Catcher, Title, Authors and University Images %%%%%%%%%%%%%%%%%%%%%%
+\begin{poster}{
+%	grid=false,
+	columns=3,
+	colspacing=4.2mm,
+	headerheight=0.08\textheight,
+	background=none,
+	eyecatcher=false,
+	%posterbox options
+	headerborder=closed,
+	borderColor=black,
+	headershape=rectangle,
+	headershade=plain,
+	headerColorOne=blue,
+	textborder=rectangle,
+	boxshade=plain,
+	boxColorOne=white,
+	headerFontColor=white,
+	headerfont=\color{white}\large\bfseries\sffamily,
+	textfont=\larger\sffamily,
+	linewidth=1pt
+}
+%%% Eye Cacther %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{
+	Eye Catcher, empty if option eyecatcher=false - unused
+}
+%%% Title %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\sf\bf
+	Biased Urns for efficient Stopping Criteria in technology-Assisted Reviews (BUSCAR)
+}
+%%% Authors %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{
+ %\url{https://dx.doi.org/10.1038/s41558-019-0684-5}\\
+
+}
+%%% Logo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{
+% The logos are compressed a bit into a simple box to make them smaller on the result
+\setlength\fboxsep{0pt}
+\setlength\fboxrule{0pt}
+	\fbox{
+		\begin{minipage}[border]{14em}
+			\centering
+			\includegraphics[width=6.5em, ]{../pres/images/MCC_Logo_RZ_rgb.jpg}
+		\end{minipage}
+	}
+}
+
+
+
+\headerbox{Problem}{name=problem,column=0,row=0}{
+
+%\includegraphics[width=\linewidth]{../plots/literature_size/pubs_time_wgb_lp.pdf}
+
+Machine-learning priorised screening can save work, but only if we know when it is \textbf{safe} to stop
+
+
+	\includegraphics[width=\linewidth]{../pres/images/potential_stopping.pdf}
+
+
+}
+
+\headerbox{Urns}{name=urn,column=0,below=problem}{
+	
+	%\includegraphics[width=\linewidth]{../plots/literature_size/pubs_time_wgb_lp.pdf}
+	
+	The hypergeometric distribution models the likelihood of retrieving $k$ red marbles from an urn containing $N$ marbles, of which $K$ are red, if we pick out $n$ marbles without replacing them.
+	
+	
+	\includegraphics[width=\linewidth]{../pres/images/Keats_urn.jpg}
+	
+	Thinking of relevant documents as red marbles, this provides a conservative stopping criterion (Callaghan and Müller-Hansen, 2020), when we assume (conservatively) that the likelihood of drawing a red or white marble is equal.
+	
+	
+}
+
+\headerbox{Biased Urns}{name=biasedurn,column=1,span=2,row=0}{
+	
+	%\includegraphics[width=\linewidth]{../plots/literature_size/pubs_time_wgb_lp.pdf}
+	
+Biased Urn Theory (Fog, 2023), models what happens when the likelihood of drawing a random item of interest is higher than the likelihood of drawing a random irrelevant item. The ratio between these two is the \textbf{bias}
+}
+
+\headerbox{Method}{name=method,column=1, span=2, below=biasedurn}{
+	
+	%\includegraphics[width=\linewidth]{../plots/literature_size/pubs_time_wgb_lp.pdf}
+	
+	\begin{enumerate}
+		\item Estimate maximum number of relevant documents in a given confidence interval from random sample
+		\item Look back at the last 1/2 of documents since the random sample, and use Wallenius' non-central hypergeometric distribution and Maximum Likelihood Estimation to find the level of bias below which 95\% of the probability distribution occurs
+		\item Look back at previous batches (last 1, last 2, last 3...) to see the likelihood of the observed number or relevant documents occuring given the null hypothesis that we have missed our target.
+	\end{enumerate}
+}
+
+\headerbox{Experiments}{name=exp,column=1, span=2,below=method}{
+	
+	%\includegraphics[width=\linewidth]{../plots/literature_size/pubs_time_wgb_lp.pdf}
+	
+	We test our stopping criteria with 100 runs on complete systematic review datasets (from Cohen, 2006), with different recall targets (0.8, 0.95, 0.99) and different confidence levels (0.8, 0.95, 0.99). We show the distribution of additional work savings compared to an omniscient criterion, as well as the distribution of recall, both on average, and for each dataset.
+}
+
+\headerbox{Results}{name=res,column=1, span=2,below=exp}{
+	
+%\setcaptiontype{figure}% Fake a figure environment
+%
+%	\subfloat[Target recall 0.8 - conf 0.8]{
+%	\includegraphics[width=0.32\textwidth]{../plots/jp_conservative_bias_0.8_0.8.pdf}}  
+%	\hfill
+%	\subfloat[Confidence 0.95]{
+%	\includegraphics[width=0.32\textwidth]{../plots/jp_conservative_bias_0.8_0.95.pdf}}
+%	\hfill
+%	\subfloat[Confidence 0.99]{
+%	\includegraphics[width=0.32\textwidth]{../plots/jp_conservative_bias_0.8_0.99.pdf}}
+%
+%	\subfloat[Target recall 0.95 - conf 0.8]{
+%	\includegraphics[width=0.32\textwidth]{../plots/jp_conservative_bias_0.95_0.8.pdf}}  
+%\hfill
+%\subfloat[Confidence 0.95]{
+%	\includegraphics[width=0.32\textwidth]{../plots/jp_conservative_bias_0.95_0.95.pdf}}
+%\hfill
+%\subfloat[Confidence 0.99]{
+%	\includegraphics[width=0.32\textwidth]{../plots/jp_conservative_bias_0.95_0.99.pdf}}
+%
+%	\subfloat[Target recall 0.99 - conf 0.8]{
+%	\includegraphics[width=0.32\textwidth]{../plots/jp_conservative_bias_0.99_0.8.pdf}}  
+%\hfill
+%\subfloat[Confidence 0.95]{
+%	\includegraphics[width=0.32\textwidth]{../plots/jp_conservative_bias_0.99_0.95.pdf}}
+%\hfill
+%\subfloat[Confidence 0.99]{
+%	\includegraphics[width=0.32\textwidth]{../plots/jp_conservative_bias_0.99_0.99.pdf}}	
+%
+%  %\caption{Signed distance field representation}
+
+\includegraphics{../plots/composite.pdf}
+
+Using a biased urn results in higher work savings (see example pathway, while still maintaining recall levels above a target level at a given confidence level).
+
+
+
+}
+
+
+
+
+
+
+
+\begin{posterbox}[name=footer,span=2,column=0,above=bottom,boxheaderheight=0em,textborder=none]{}
+{
+	Email me for how to use the criterion in your project. R and python packages forthcoming. \\
+	Max Callaghan \& Finn Müller-Hansen\\
+{\smaller callaghan@mcc-berlin.net, @MaxCallaghan5}
+}
+\end{posterbox}
+
+
+
+
+
+
+
+
+\end{poster}
+\end{document}

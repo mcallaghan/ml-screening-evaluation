@@ -1,0 +1,21 @@
+\begin{thebibliography}{}
+
+\bibitem[Callaghan and {M{\"u}ller-Hansen}, 2020]{callaghan_statistical_2020}
+Callaghan, M. and {M{\"u}ller-Hansen}, F. (2020).
+\newblock Statistical {{Stopping Criteria}} for {{Automated Screening}} in
+  {{Systematic Reviews}}.
+\newblock {\em Systematic Reviews}.
+
+\bibitem[De~Bruin et~al., 2023]{de_bruin_synergy_2023}
+De~Bruin, J., Ma, Y., Ferdinands, G., Teijema, J., and {Van de Schoot}, R.
+  (2023).
+\newblock {{SYNERGY}} - {{Open}} machine learning dataset on study selection in
+  systematic reviews.
+
+\bibitem[Wang et~al., 2024]{wang_zero-shot_2024}
+Wang, S., Scells, H., Zhuang, S., Potthast, M., Koopman, B., and Zuccon, G.
+  (2024).
+\newblock Zero-shot {{Generative Large Language Models}} for {{Systematic
+  Review Screening Automation}}.
+
+\end{thebibliography}

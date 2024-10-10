@@ -1,0 +1,60 @@
+\begin{thebibliography}{1}
+
+\bibitem{lefebvre_chapter_2023}
+C~Lefebvre, J~Glanville, S~Briscoe, R~Featherstone, M-I Metzendorf,
+  A~{Noel-Storr}, R~Paynter, T~Rader, J~Thomas, and {\relax LS}~Wieland.
+\newblock {\em Chapter 4: {{Searching}} for and Selecting Studies}.
+\newblock Version 6.4 (updated october 2023) edition, 2023.
+
+\bibitem{omara-eves_using_2015}
+Alison {O'Mara-Eves}, James Thomas, John McNaught, Makoto Miwa, and Sophia
+  Ananiadou.
+\newblock Using text mining for study identification in systematic reviews: A
+  systematic review of current approaches.
+\newblock {\em Systematic Reviews}, 4(1):5, January 2015.
+
+\bibitem{cohen_reducing_2006}
+Aaron~M. Cohen, William~R. Hersh, Kim Peterson, and Po-Yin Yen.
+\newblock Reducing workload in systematic review preparation using automated
+  citation classification.
+\newblock {\em Journal of the American Medical Informatics Association},
+  13(2):206--219, 2006.
+
+\bibitem{wang_zero-shot_2024}
+Shuai Wang, Harrisen Scells, Shengyao Zhuang, Martin Potthast, Bevan Koopman,
+  and Guido Zuccon.
+\newblock Zero-shot {{Generative Large Language Models}} for {{Systematic
+  Review Screening Automation}}, January 2024.
+
+\bibitem{SneydS19}
+Alison Sneyd and Mark Stevenson.
+\newblock Modelling stopping criteria for search results using poisson
+  processes.
+\newblock In Kentaro Inui, Jing Jiang, Vincent Ng, and Xiaojun~Wan 0001,
+  editors, {\em Proceedings of the 2019 Conference on Empirical Methods in
+  Natural Language Processing and the 9th International Joint Conference on
+  Natural Language Processing, {{EMNLP-IJCNLP}} 2019, Hong Kong, China,
+  November 3-7, 2019}, pages 3482--3487. Association for Computational
+  Linguistics, 2019.
+
+\bibitem{callaghan_statistical_2020}
+Max Callaghan and Finn {M{\"u}ller-Hansen}.
+\newblock Statistical {{Stopping Criteria}} for {{Automated Screening}} in
+  {{Systematic Reviews}}.
+\newblock {\em Systematic Reviews}, September 2020.
+
+\bibitem{lewis_confidence_2023}
+David~D. Lewis, Lenora Gray, and Mark Noel.
+\newblock Confidence {{Sequences}} for {{Evaluating One-Phase
+  Technology-Assisted Review}}.
+\newblock In {\em Proceedings of the {{Nineteenth International Conference}} on
+  {{Artificial Intelligence}} and {{Law}}}, {{ICAIL}} '23, pages 131--140, New
+  York, NY, USA, September 2023. Association for Computing Machinery.
+
+\bibitem{de_bruin_synergy_2023}
+Jonathan De~Bruin, Yongchao Ma, Gerbrich Ferdinands, Jelle Teijema, and Rens
+  {Van de Schoot}.
+\newblock {{SYNERGY}} - {{Open}} machine learning dataset on study selection in
+  systematic reviews, April 2023.
+
+\end{thebibliography}

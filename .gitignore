@@ -2,3 +2,4 @@
 .venv/*
 output_data/*
 sync.sh
+stopping-app/*
