@@ -1,0 +1,10 @@
+transformers
+torch
+accelerate
+ipykernel
+sentencepiece
+pandas
+protobuf
+bitsandbytes
+matplotlib
+scikit-learn
