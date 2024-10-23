@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: LLM-screening_wed_seminar.aux
+The style file: apalike.bst
+Database file #1: ../LLMs.bib
+You've used 2 entries,
+            1935 wiz_defined-function locations,
+            482 strings with 4136 characters,
+and the built_in function-call counts, 723 in all, are:
+= -- 65
+> -- 46
+< -- 1
++ -- 16
+- -- 16
+* -- 60
+:= -- 142
+add.period$ -- 5
+call.type$ -- 2
+change.case$ -- 18
+chr.to.int$ -- 2
+cite$ -- 2
+duplicate$ -- 23
+empty$ -- 36
+format.name$ -- 20
+if$ -- 129
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 1
+newline$ -- 12
+num.names$ -- 6
+pop$ -- 16
+preamble$ -- 1
+purify$ -- 18
+quote$ -- 0
+skip$ -- 20
+stack$ -- 0
+substring$ -- 24
+swap$ -- 1
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 12
+warning$ -- 0
+while$ -- 4
+width$ -- 0
+write$ -- 24

@@ -1,6 +1,8 @@
 .ipynb_checkpoints/*
 .venv/*
 output_data/*
+sync.sh
+stopping-app/*
 dependencies/*
 venv/*
 cpuvenv/*

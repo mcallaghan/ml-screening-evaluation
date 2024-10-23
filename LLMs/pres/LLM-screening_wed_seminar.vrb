@@ -1,0 +1,16 @@
+\frametitle{Implementation is relatively straightforward}
+\small
+\begin{lstlisting}[language=Python]
+prompt = Template('''<s>[INST] <<SYS>>
+You are a systematic review helper tasked with finding out whether a study is relevant to the review $t
+
+Answer 'yes' if the study is relevant, or 'no' if not
+<</SYS>>
+
+Study: $s
+
+Should the study be included? Answer yes or no. [/INST] ''')
+
+prompt.substitute({'t': review, 's': study_title}),
+\end{lstlisting}
+^^I
