@@ -5,8 +5,11 @@
 \usepackage{natbib}
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[margin=2.5cm]{geometry}
 
-\title{Zero-shot LLMs can save additional work in machine learning prioritised screening for systematic reviews}
+
+\title{Can Zero-shot LLMs save additional work in machine learning prioritised screening for systematic reviews?}
 \author[1,2]{Max Callaghan}
 
 \affil[1]{Mercator Research Institute on Global Commons and Climate Change, Torgauer Straße 12-15, 10829 Berlin, Germany}
@@ -89,18 +92,66 @@
 	
 	First, we start by examining the rankings produced by our ML-assisted screening processes. Figure \ref{fig:rankings} shows these for a selected review dataset on Psychological theories of depressive relapse and recurrence, which contained 38,114 records, of which 0.2\% were relevant. Looking at the left side, we see that all evaluated models result in the identification of all relevant documents before all documents have been screened, meaning that work savings are in principle possible. On the right-hand side, we see the Receiver Operating Characteristic - Area Under the Curve (ROC-AUC) score, which measures the likelihood that a random relevant document is ranked higher than a random irrelevant record. A score of 1 indicates that all relevant documents are correctly identified first, before any irrelevant documents have been seen. A score of 0.5 indicates that the ranking is no better than chance.
 	
-	
-	Overall, across the X datasets, Llama3.1 models achieves a higher ROC AUC score than the SVM baseline, while Llama2 models achieve a lower score (figure \ref{fig:macro}). Across both generations of Llama models, models with more parameters achieved higher scores than models with fewer paramaters. This difference was more pronounced for Llama2 than for Llama3.1 
-	
 
+\begin{figure}
+	\includegraphics[width=\columnwidth]{../../figures/macro_comparison.pdf}
+	\caption{The distribution of ROC AUC scores across datasets. The results for the support vector machine (SVM) display the median score for each dataset.}
+	\label{fig:macro}
+\end{figure}
 
-	\begin{figure}
-		\includegraphics[width=\columnwidth]{../../figures/macro_comparison.pdf}
-		\caption{The distribution of ROC AUC scores across datasets. The results for the support vector machine (SVM) display the median score for each dataset.}
-		\label{fig:macro}
-	\end{figure}
+\begin{table}
+	\centering
+	\input{../../tables/recall.tex}
+	\caption{Recall achieved at the 1-confidence percentile across model runs. Values below the recall target are highlighted in bold.}
+	\label{tab:recall}
+\end{table}
+
+	
+	
+	Overall, across the X datasets, Llama3.1 models achieves a higher ROC AUC score than the SVM baseline, while Llama2 models achieve a lower score (figure \ref{fig:macro}). Across both generations of Llama models, models with more parameters achieved higher scores than models with fewer paramaters. This difference was more pronounced for Llama2 than for Llama3.1. 
+	
+	Next, we apply the stopping criteria to all prioritised runs across all model and dataset combinations, and analyse the recall achieved and the work savings that would have been made. In table \ref{tab:recall}, we show the recall achieved at the percentile of model runs given by 1 minus the confidence interval, for each targeted recall level. 
+	For example, if we had used SVM and had stopped screening with $p=0.5$ for a recall target of $0.8$, we would have achieved a recall level of at least $0.94$ 50\% of the time. In other words, we would have missed our recall target \textit{less than} 50\% of the time, meaning that our confidence estimation was conservative (in line with expectations from \cite{callaghan_statistical_2020}).
+	Moreover, across 100 combinations of recall target, confidence level, and model, the target was only missed more than would be expected given the confidence level in 3 cases (highlighted in bold text). Moreover, for each of these cases the percentiles are highly imprecise, as they are calculated over the distribution of 26 datasets. For the case of SVM, where there are 100 runs for each dataset, the target was never missed more than would have been expected given the confidence level. This highlights that the stopping criteria developed in \cite{callaghan_statistical_2020} provide a highly effective way to quantify and mitigate the risks of missing relevant studies.
+	
+	\begin{table}
+		\centering
+		\input{../../tables/wss_p.tex}
+		\caption{Average proportional work savings across datasets for each combination of  model recall target and confidence level. For the SVM column where there are multiple runs per dataset, we first calculate the median value for each dataset before aggregating across datasets.}
+		\label{tab:wssp}
+	\end{table}
+	
+	We now turn to the work savings that would have been achieved at the stopping points given by the stopping criteria. Table \ref{tab:wssp} shows the mean and standard deviation of the work savings achieved for each combination of model, recall target, and confidence level. For low recall targets and low levels of confidence, large work savings are possible (>50\%). Increasing either the recall target or the level of confidence reduces the work savings that can be achieved. For example, for a recall target of 99\%, it is still possible to achieve work savings of 28.8\%, as long as one accepts a 50-50 chance of missing the target. However, if one wants to be 99\% confident that a 99\% recall target has not been missed, on average one would only save 1.6\% of the work.
+	
+	\begin{table}
+		\centering
+		\input{../../tables/wsst.tex}
+		\caption{Average proportional work savings across datasets for each combination of  model recall target and confidence level. For the SVM column where there are multiple runs per dataset, we first calculate the median value for each dataset before aggregating across datasets.}
+		\label{tab:wsst}
+	\end{table}
+	
+	Despite the previous results showing that the largest and newest LLMs achieved superior ROC-AUC scores to a simpler SVM model with iterative retraining, once we look at the work savings that would have been achieved in a realistic setting, we see that in the vast majority of settings, we would still save more work with a simpler SVM model. For 17 of the 20 combinations of recall targets and confidence levels shown in table \ref{tab:wssp}, the highest work savings (highlighted in bold) are achieved with an SVM.
+	
+	Finally, we look at total work savings available across datasets (table \ref{tab:wsst}). The Synergy dataset contains systematic review datasets that range from 258 to 48,375 records. 
+%	Because of the relationship between the number of records that have been seen and the confidence intervals calculated as part of the stopping criterion, larger proportional work savings are in principle possible with larger datasets \cite{callaghan_statistical_2020}. 
+	Screening each of the datasets by hand would have required 169,288 records to be screened.	
+	If we had aimed for a recall target of 80\% and accepted a 50\% chance of missing the target, this number could have been reduced by 100,248 in the worst performing model (Llama 2 7b) to 132,808 in the best performing model (Llama 3.1 70b).
+	Again, increasingly ambitious recall targets and increasingly high levels of confidence reduce the amount of work that can be saved substantially. It is still possible to achieve an ambitious recall target of 90\% with 90\% confidence and save almost half of the otherwise required work (63,245 records). However, in highly ambitious settings, such as 99\% recall with 99\% confidence, only minimal work savings are possible (7,980 records, or just under 5\%)
+
 	
 	\section*{Discussion}
+	
+	These results add to previous evidence that it is possible to \textit{safely} use prioritised screening approaches that can guarantee a given level of recall with a given level of confidence \cite{callaghan_statistical_2020}. Across a wide range of datasets, as well as a wide range of different models, the stopping criteria ensured that the targeted level of recall was missed no more than expected given the confidence level.
+	
+	Next, we add to promising evidence that LLMs can produce remarkably good rankings of abstracts for screening, even with very little human input. However, when we consider a practical use-case, the benefits of using LLMs for screening seem to be much more limited. In the majority of settings, higher work savings are achieved with much simpler SVM models.
+	
+	Simplified version, no inclusion criteria - but also simplified SVM setting, no parameter tuning, large batches, no finetuned.
+	
+	Possibility to combine
+	
+	Scientific treatment of the costs and benefits of different options. 
+	
+	
 	
 	\bibliographystyle{unsrt}
 	
