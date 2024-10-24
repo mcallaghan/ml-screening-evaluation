@@ -5,6 +5,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.feature_extraction.text import TfidfVectorizer
 import sys
+import os
+import pyarrow as pa
+import pyarrow.parquet as pq
 import sqlite3
 import time
 from datetime import timedelta
@@ -73,12 +76,13 @@ class ScreenSimulation():
         self.df.loc[sample_ids,'screened_order'] = np.arange(sample_ids.shape[0])+1
         
 
-    def simulate(self, verbose=False):
+    def simulate(self, out_path, run_id, review_id, verbose=False):
         """
         Run a simulation of screening documents with ML prioritisation
         """
         # 'Screen' a sample of documents
         self.sample(self.seed, self.screen_config)
+        batch_i = 0
         # As long as there are documents left unscreened
         while self.df.screened.sum() < self.df.shape[0]:
             # Get the indices of screened and not yet screened documents
@@ -106,11 +110,25 @@ class ScreenSimulation():
                 train_idx.shape[0],
                 train_idx.shape[0] + batch_id.shape[0]
             ) + 1
-
+            # Log the predictions
+            self.df.loc[pred_idx,'last_prediction'] = y_pred
+            if batch_i==0:
+                self.df.loc[pred_idx,'first_prediction'] = y_pred
+            # Write predictions to the database
+            n_screened = train_idx.shape[0]
+            pdf = pd.DataFrame({
+                'review_id': review_id,
+                'run_id': run_id,
+                'n_screened': n_screened,
+                'prediction': y_pred,
+            })
+            pdf.to_parquet('/p/tmp/maxcall/ml-screening/batch_predictions',partition_cols=['review_id','run_id','n_screened'])
             if verbose:
                 # Print progress and recall
-                print(self.df.loc[self.df['screened']==1].shape[0])
+                print(self.df.loc[self.df['screened']==1].shape[0]-train_idx.shape[0])
                 print(self.df.loc[self.df['screened']==1,'y'].sum()/self.df['y'].sum())
+
+            batch_i += 1
         return self.df
 
 def main(version: str):
@@ -130,13 +148,24 @@ def main(version: str):
         print(f'Test mode: randomly assigned {rank}')
         test = True
 
-    con = sqlite3.connect('output_data/experiments.sql', timeout=20)
-    cur = con.cursor()
-    cur.execute('INSERT INTO runs (thread,version) VALUES (?,?)',(rank,version))
-    con.commit()
-    run_id = cur.lastrowid
-    cur.close()
+    db_path = '/p/tmp/maxcall/ml-screening/experiments.sql'
+    db_path = 'output_data/experiments.sql'
 
+    con = sqlite3.connect(db_path, timeout=120)
+    cur = con.cursor()
+    stmt = f'SELECT run_id FROM runs WHERE version="{version}" AND thread="{rank}";'
+    cur.execute(stmt)
+    res = cur.fetchone()
+    if res is None:
+        cur.execute('INSERT INTO runs (thread,version) VALUES (?,?)',(rank,version))
+        con.commit()
+        run_id = cur.lastrowid
+        cur.close()
+    else:
+        run_id = res[0]
+
+    con.close()
+    
     pipelines = [
         Pipeline(
             steps=[
@@ -145,27 +174,45 @@ def main(version: str):
             ]
         )
     ]
+
+    configs = [
+        ScreenConfig()
+    ]
     
-    conf = ScreenConfig()
     
-    for d in iter_datasets():
+    
+    for i, d in enumerate(iter_datasets()):
         df = d.to_frame().rename(columns={'label_included':'y'})
         df['X'] = df['title'].astype(str) + ' ' + df['abstract'].astype(str)
+        
+        if rank==0:
+            con = sqlite3.connect(db_path, timeout=120)
+            cur = con.cursor()
+            stmt = 'INSERT INTO REVIEWS (review_id, review_name, n_records, prevalence) VALUES (?,?,?,?);'
+            data = (i,d.name, df.shape[0], df['y'].sum()/df.shape[0])
+            cur.execute(stmt, data)
+            con.commit()
+            review_id = cur.lastrowid
+            cur.close()
+            con.close()
+        review_id = i
+        
         for pipe in pipelines:
-            ss = ScreenSimulation(df, pipe, rank, conf)
-            res = ss.simulate()
-            res = res.reset_index()
-            res['run_id'] = run_id
-            res['review'] = d.name
-            res = res.rename(columns={
-                'openalex_id': 'rec_id',
-                'y': 'relevant'
-            })
-            res[[
-                'run_id','rec_id','screened_order','review','relevant'
-            ]].to_sql(
-                'ordered_records', con, if_exists='append', index=False
-            )
+            for conf in configs:
+                ss = ScreenSimulation(df, pipe, rank, conf)
+                res = ss.simulate(db_path, run_id, review_id)
+                res = res.reset_index()
+                res['run_id'] = run_id
+                res['review_id'] = review_id
+                res = res.rename(columns={
+                    'openalex_id': 'rec_id',
+                    'y': 'relevant'
+                })
+                res[[
+                    'run_id','rec_id','screened_order','review_id','relevant','first_prediction','last_prediction'
+                ]].to_parquet('/p/tmp/maxcall/ml-screening/ordered_records',partition_cols=['review_id','run_id'])
+            
+            
 
 if __name__ == '__main__':
     start_time = time.monotonic()

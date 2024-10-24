@@ -3,3 +3,8 @@
 output_data/*
 sync.sh
 stopping-app/*
+dependencies/*
+venv/*
+cpuvenv/*
+out/*
+testenv/*

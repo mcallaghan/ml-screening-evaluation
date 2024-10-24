@@ -1,0 +1,9 @@
+transformers
+torch
+typer
+huggingface_hub
+pandas
+protobuf
+sentencepiece
+accelerate
+bitsandbytes

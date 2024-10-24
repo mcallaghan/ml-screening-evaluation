@@ -1,0 +1,23 @@
+[
+    {
+        "name": "tfidf-svm",
+        "steps": [
+            {
+                "name": "vect",
+                "module": "sklearn.feature_extraction.text",
+                "package": "TfidfVectorizer",
+                "args": {
+                }
+            },
+            {
+                "name": "clf",
+                "module": "sklearn.svm",
+                "package": "SVC",
+                "args": {
+                    "probability": true,
+                    "class_weight": "balanced"
+                }
+            }
+        ]
+    }
+]

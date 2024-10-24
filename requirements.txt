@@ -1,8 +1,19 @@
-#synergy-dataset
-#ipykernel
+synergy-dataset
+ipykernel
 pandas>=2.2.0
 numpy
 pyarrow
 scikit-learn
 matplotlib
+impi-rt
 mpi4py
+typer
+cython
+setuptools
+pkgconfig
+pyarrow
+buscarpy
+# Install h5py from source https://docs.h5py.org/en/stable/build.html#building-against-parallel-hdf5
+# CC="mpicc" HDF5_MPI="ON" HDF5_VERSION="1.14.4" HDF5_DIR="/p/system/packages/libraries/hdf5/1.14.4/" pip install --no-build-isolation --no-binary=h5
+# CC="mpicc" HDF5_MPI="ON" HDF5_VERSION="1.14.4" HDF5_DIR="~/hdf5-hdf5_1.14.4.3/hdf5" pip install --no-build-isolation --no-binary=h5py h5py
+
