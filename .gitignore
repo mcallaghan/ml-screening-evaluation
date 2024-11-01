@@ -8,3 +8,12 @@ venv/*
 cpuvenv/*
 out/*
 testenv/*
+*.aux
+*.bbl
+*.blg
+*.log
+*.nav
+*.vrb
+*.toc
+*.snm
+*.synctex.gz
