@@ -12,8 +12,9 @@
 \addbibresource{LLMs/stopping-criteria.bib}
 
 
-\title{Can Zero-shot LLMs save additional work in machine learning prioritised screening for systematic reviews?}
+\title{Can Zero-shot Large Language Models save additional work in machine learning prioritised screening for systematic reviews?}
 \author[1,2]{Max Callaghan}
+\author[1,2]{Jan Minx}
 
 \affil[1]{Mercator Research Institute on Global Commons and Climate Change, Torgauer Straße 12-15, 10829 Berlin, Germany}
 \affil[2]{%
@@ -26,7 +27,7 @@
 	\doublespacing
 	
 	\begin{abstract}
-		Zero shot learning using LLMs has received widespread attention in recent years, including in the automation of systematic review screening. 
+		Zero shot learning using Large Language Models (LLMs) has received widespread attention in recent years, including in the automation of systematic review screening. 
 		However, there has been insufficient research on robust processes to automate screening responsibly. 
 		For systematic review screening, responsible automation requires that the risks of missing relevant studies (which are inherent when the process is automated) can be accurately quantified and managed. 
 		In this paper, we adapt LLM-assisted screening to the widespread machine learning prioritised screening paradigm, and use a robust stopping criterion to quantify how much work can be responsibly saved with different levels of risk tolerance for missing studies.
@@ -128,7 +129,7 @@
 		\label{tab:wssp}
 	\end{table}
 	
-	We now turn to the work savings that would have been achieved at the stopping points given by the stopping criteria. Table \ref{tab:wssp} shows the mean and standard deviation of the work savings achieved for each combination of model, recall target, and confidence level. For low recall targets and low levels of confidence, large work savings are possible (>50\%). Increasing either the recall target or the level of confidence reduces the work savings that can be achieved. For example, for a recall target of 99\%, it is still possible to achieve work savings of 28.8\%, as long as one accepts a 50-50 chance of missing the target. However, if one wants to be 99\% confident that a 99\% recall target has not been missed, on average one would only save 1.6\% of the work.
+	We now turn to the work savings that would have been achieved at the stopping points given by the stopping criteria. Table \ref{tab:wssp} shows the mean and standard deviation of the work savings achieved for each combination of model, recall target, and confidence level. For low recall targets and low levels of confidence, large work savings are possible (\textgreater50\%). Increasing either the recall target or the level of confidence reduces the work savings that can be achieved. For example, for a recall target of 99\%, it is still possible to achieve work savings of 28.8\%, as long as one accepts a 50-50 chance of missing the target. However, if one wants to be 99\% confident that a 99\% recall target has not been missed, on average one would only save 1.6\% of the work.
 	
 	\begin{table}
 		\centering
@@ -159,6 +160,10 @@
     Ultimately though, the utility of prioritisation improvements achieved by more complex models must be balanced against the financial and environmental costs of their deployment, as compared to simpler versions. It must be said also, that the baseline comparison - which consisted of few training iterations, a simple model, and no hyperparameter tuning - was also simplistic.
 
     Whatever approach is used, the question of how to mitigate the risks of automation to the quality of the study must be paramount. This is a question of statistics, not of machine learning engineering. Currently, prioritised screening with robust stopping criteria represents the best available method to manage the risk of missing studies. The stopping criteria we use has the benefit of ensuring that, should the model used perform less well than expected (but not worse than chance), it is only work savings that will be impacted, while the desired recall level is secured with the desired confidence level.
+
+    \section*{Code Availability}
+
+    The code required to reproduce the results of this study is made availabel at \url{https://github.com/mcallaghan/ml-screening-evaluation}
 	
 	
 	%\bibliographystyle{unsrt}
@@ -173,6 +178,39 @@
 	\section*{Supplementary Material}
 	
 	\subsection*{Prompt template}
+
+        \subsubsection*{Llama3.1}
+
+        \begin{verbatim}
+    <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+    You are a systematic review helper tasked with finding out whether a study is relevant to the review $t
+
+    Answer 'yes' if the study is relevant, or 'no' if not
+    <|eot_id|><|start_header_id|>user<|end_header_id|>
+
+    Study: $s 
+
+    Should the study be included? Answer yes or no. <|eot_id|>
+
+    <|start_header_id|>assistant<|end_header_id|>
+        
+        \end{verbatim}
+
+
+
+        \subsubsection*{Llama2}
+        \begin{verbatim}
+    <s>[INST] <<SYS>>
+    You are a systematic review helper tasked with finding out 
+    whether a study is relevant to the review $t
+    
+    Answer 'yes' if the study is relevant, or 'no' if not
+    <</SYS>>
+    
+    Study: $s 
+    
+    Should the study be included? Answer yes or no. [/INST] 
+        \end{verbatim}
 	
 	
 \end{document}
